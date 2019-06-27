@@ -1,0 +1,32 @@
+{
+    "include": [
+        "./src/**/*",
+        "./typings/**/*",
+        "./example/**/*",
+        "./test/**/*", 
+    ],
+    "compilerOptions": {
+        "typeRoots": ["./node_modules/@types", "./typings"],
+        "sourceMap": true,
+        "module": "ESNext",
+        "target": "es5",
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "strict": true,
+        "jsx": "react",
+        "lib": [
+            "es2015",
+            "es2017",
+            "dom"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

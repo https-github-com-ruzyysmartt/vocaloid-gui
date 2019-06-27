@@ -1,0 +1,9 @@
+/dist
+/node_modules
+/.vscode/ipch
+/.idea
+/build
+/dist
+/cmake-build-debug
+/target
+/**/*.rs.bk
