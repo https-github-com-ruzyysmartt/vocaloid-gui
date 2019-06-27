@@ -10,10 +10,8 @@ const popoverContainerStyles = (theme: Theme): any => {
     const radius = `${theme.components.common.borderRadius['md']}px`;
     return {
         position: 'absolute',
+        display: 'inline-block',
         '.popover': {
-            position: 'absolute'
-        },
-        '.popover-content': {
             borderRadius: radius,
             backgroundColor: theme.palette.background.surface,
             boxShadow: theme.depth.level[2],
@@ -44,6 +42,25 @@ export interface PopoverProps extends BaseComponentProps{
     onClose?: (...args: any[]) => void;
 }
 
+
+const applyHorizontalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'left'|'center'|'right') => {
+    if (transformPos === 'center') {
+        pos -= targetBounds.width * 0.5;
+    } else if (transformPos === 'right') {
+        pos -= targetBounds.width;
+    }
+    return pos;
+};
+
+const applyVerticalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'top'|'middle'|'bottom') => {
+    if (transformPos === 'middle') {
+        pos -= targetBounds.height * 0.5;
+    } else if (transformPos === 'bottom') {
+        pos -= targetBounds.height;
+    }
+    return pos;
+};
+
 export default ({
     visible, anchorEl, anchorPos, transformPos,
     onClose, transitionClassNames, children, ...others
@@ -52,8 +69,8 @@ export default ({
     const [transitionActive, setTransitionActive] = useState(false);
     const [transitionEnded, setTransitionEnded] = useState(false);
 
-    const [ap, setAp] = useState(anchorPos || { horizontal: 'left', vertical: 'top' });
-    const [tp, setTp] = useState(transformPos || { horizontal: 'left', vertical: 'top' });
+    const ap = anchorPos || { horizontal: 'left', vertical: 'top' };
+    const tp = transformPos || { horizontal: 'left', vertical: 'top' };
 
     useEffect(() => {
         if (visible) {
@@ -71,75 +88,63 @@ export default ({
         onClose && onClose();
     };
 
-    const wrapper = useRef<HTMLDivElement>(null);
-    useClickOutside(wrapper.current, onClickOutSide, 'mousedown');
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
+    useClickOutside(wrapperRef.current, onClickOutSide, 'mousedown');
     const [pos, setPos] = useState({ left: 0, top: 0 });
     const pageSize = useResize(null);
     useEffect(() => {
-        if (anchorEl && wrapper.current && visible) {
+        if (anchorEl && popoverRef.current && transitionActive) {
             const bounds = anchorEl.getBoundingClientRect();
-            const wBounds = wrapper.current.getBoundingClientRect();
+            const wBounds = popoverRef.current.getBoundingClientRect();
             let newPos = { left: 0, top: 0 };
-            if (ap.horizontal === 'left' || bounds.right + wBounds.width > pageSize.width) {
+            if (ap.horizontal === 'left') {
                 newPos.left = bounds.left;
-            } else if (ap.horizontal === 'right' || bounds.left - wBounds.width < 0) {
-                newPos.left = -(pageSize.width - (bounds.left + bounds.width));
+            } else if (ap.horizontal === 'right') {
+                newPos.left = bounds.right;
             } else {
                 newPos.left = bounds.left + bounds.width * 0.5;
             }
 
-            if (ap.vertical === 'top' || bounds.bottom + wBounds.height > pageSize.height) {
+            newPos.left = applyHorizontalTransformPos(newPos.left, wBounds, tp.horizontal);
+
+            if (newPos.left + wBounds.width >= pageSize.width) {
+                newPos.left = bounds.left - wBounds.width;
+            } else if (newPos.left < 0) {
+                newPos.left = bounds.right;
+            }
+
+            if (ap.vertical === 'top') {
                 newPos.top = bounds.top;
-            } else if (ap.vertical === 'bottom' || bounds.top - wBounds.height < 0) {
-                newPos.top = -(pageSize.height - (bounds.top + bounds.height));
+            } else if (ap.vertical === 'bottom') {
+                newPos.top = bounds.bottom;
             } else {
                 newPos.top = bounds.top + bounds.height * 0.5;
             }
-            setPos(newPos);
+
+            newPos.top = applyVerticalTransformPos(newPos.top, wBounds, tp.vertical);
+
+            if (newPos.top + wBounds.height > pageSize.height) {
+                newPos.top = bounds.top - wBounds.height;
+            } else if (bounds.top - wBounds.height < 0) {
+                newPos.top = bounds.bottom;
+            }
+            if (newPos.left !== pos.left && newPos.top !== pos.top) { setPos(newPos) }
         }
-    }, [wrapper.current, visible, pageSize.width, pageSize.height]);
+    }, [popoverRef.current, anchorEl, ap, tp, pos, transitionActive, pageSize.width, pageSize.height]);
 
     let popoverContainerStyle: React.CSSProperties = {
         display: show ? 'block' : 'none',
-        transform: ''
-    };
-    let popoverStyle: React.CSSProperties = {
-        transform: ''
-    };
-    let popoverContentStyle: React.CSSProperties = {
-        transformOrigin: `${tp.horizontal} ${tp.vertical}`
+        left: `${pos.left}px`,
+        top: `${pos.top}px`
     };
 
-    if (tp.horizontal === 'left') {
-        popoverStyle.left = '0';
-    } else if (tp.horizontal === 'center') {
-        popoverStyle.left = '50%';
-        popoverStyle.transform += ' translateX(-50%)';
-    } else {
-        popoverStyle.right = '0';
-    }
-
-    if (tp.vertical === 'top') {
-        popoverStyle.top = '0';
-    } else if (tp.vertical === 'middle') {
-        popoverStyle.top = '50%';
-        popoverStyle.transform += ' translateY(-50%)';
-    } else {
-        popoverStyle.bottom = '0';
-    }
-    if (pos.left >= 0) { popoverContainerStyle.left = `${pos.left}px` }
-    else { popoverContainerStyle.right = `${Math.abs(pos.left)}px` }
-    if (pos.top >= 0) { popoverContainerStyle.top = `${pos.top}px` }
-    else { popoverContainerStyle.bottom = `${Math.abs(pos.top)}px` }
-
-    return createPortal(<div ref={wrapper} css={popoverContainerStyles} style={popoverContainerStyle}>
-        <div className="popover" style={popoverStyle} {...others}>
-            <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
-                onExited={() => setTransitionEnded(true)}>
-                <div className="popover-content" style={popoverContentStyle}>
-                    {children}
-                </div>
-            </CSSTransition>
-        </div>
+    return createPortal(<div ref={wrapperRef} css={popoverContainerStyles} style={popoverContainerStyle}>
+        <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
+            onExited={() => setTransitionEnded(true)}>
+            <div ref={popoverRef} className="popover" {...others}>
+                {children}
+            </div>
+        </CSSTransition>
     </div>, document.body);
 };

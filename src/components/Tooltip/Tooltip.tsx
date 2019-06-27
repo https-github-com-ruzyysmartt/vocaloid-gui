@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef, useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import Popover from '../Popover';
@@ -18,18 +18,25 @@ const tooltipStyles = (theme: Theme): any => {
 export interface TooltipProps extends PopoverProps{
     title?: string;
     desc?: string;
+    trigger?: 'hover' | 'click';
 }
 
-export default ({ title, desc, children, ...others }: React.PropsWithChildren<TooltipProps>) => {
+export default ({ title, desc, trigger, children, ...others }: React.PropsWithChildren<TooltipProps>) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const t = trigger || 'hover';
+    const onMouseEnter = t === 'hover' ? () => setShowTooltip(true) : undefined;
+    const onMouseLeave = t === 'hover' ? () => setShowTooltip(false) : undefined;
+    const onClick = t === 'click' ? () => setShowTooltip(true) : undefined;
     return (
-        <div ref={wrapperRef}>
+        <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} ref={wrapperRef}>
             {children}
-            <Popover anchorEl={wrapperRef.current} {...others}>
+            <Popover visible={showTooltip} onClose={() => setShowTooltip(false)}
+                anchorEl={wrapperRef.current} {...others}>
                 <div css={tooltipStyles}>
                     <div>{title}</div>
                     {desc ? <div>{desc}</div> : undefined}
-                </div>          
+                </div>
             </Popover>
         </div>
     );

@@ -49,7 +49,7 @@ export interface PointerProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
     end?: boolean;
 }
 
-export default ({start, end, className, ...others}: PointerProps) => {
+export default ({ start, end, className, ...others }: PointerProps) => {
     return (
         <div css={pointerStyles} className={
             combineClassNames(
