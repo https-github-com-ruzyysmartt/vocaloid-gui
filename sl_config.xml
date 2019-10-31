@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name="msch" value="true" />
+    <int name="config_num" value="5" />
+    <string name="geo_list">[&quot;in,id,th,ph,ru,mx,my,mm,ae,ir,vn,ug,dz,p,us,gb,fr,sa,ua&quot;]</string>
+    <int name="interval" value="3" />
+    <float name="wrong_rat" value="0.0" />
+    <string name="sskip">1</string>
+    <long name="last_rlist" value="1572547919549" />
+    <long name="lsst" value="1572537666467" />
+    <string name="location_geo"></string>
+    <int name="tosti'" value="6" />
+    <int name="countdown_time" value="8" />
+    <int name="req_inter" value="30" />
+    <long name="lastmcon" value="1572537803567" />
+    <int name="reqlist_num" value="5" />
+    <long name="last_gaid_time" value="1572548294006" />
+    <long name="last_rs" value="1572537669490" />
+    <string name="cur_vcode">88190527</string>
+</map>
