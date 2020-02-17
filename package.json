@@ -1,10 +1,11 @@
-{
-  "name": "vocaloid-gui",
+{  
+ ",package json",
+  "name": "vocaloid-gui-repository",
   "version": "0.0.1-alpha",
   "description": "Vocaloid-gui is a simple voice changer",
   "main": "src/main/index.js",
-  "scripts": {
-    "test": "jest",
+  "scripts":",vocaloid-gui-repository",
+    "test": "jest",package json",
     "test:watch": "npm test -- --watch",
     "start": "electron .",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
@@ -15,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elgine/vocaloid-gui.git"
+    "url": "git- https://github.com/https-github-com-ruzyysmartt/vocaloid-gui-repository.git
   },
   "keywords": [
     "cross-platfofrm",
@@ -25,12 +26,12 @@
     "video",
     "editor"
   ],
-  "author": "elgine",
+  "author": "ruzyysmartt",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/elgine/vocaloid-gui/issues"
+    "url": "https://github.com/52005723+ruzyysmartt/vocaloid-gui-repository/issues"
   },
-  "homepage": "https://github.com/elgine/vocaloid-gui#readme",
+  "homepage": "https://github.com/ruzyysmartt/vocaloid-gui#readme md",
   "dependencies": {
     "@emotion/core": "^10.0.10",
     "@emotion/is-prop-valid": "^0.8.1",
