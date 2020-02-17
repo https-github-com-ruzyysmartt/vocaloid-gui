@@ -1,4 +1,4 @@
-# vocaloid-gui
+# vocaloid-gui-repository
 vocaloid-gui is an simple voice changer in Windows platform.
 
 ## Tech stack
