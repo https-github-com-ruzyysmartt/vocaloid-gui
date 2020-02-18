@@ -10,3 +10,7 @@ vocaloid-gui is an simple voice changer in Windows platform.
 
 ## License
 The project is under MIT license
+ 
+More info;
+https://github.com/https-github-com-ruzyysmartt/vocaloid-gui-repository.git
+@GitHub.2020
